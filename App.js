@@ -63,7 +63,7 @@ const App = () => {
   return (
     <View style={{ backgroundColor: '#ebebeb', width: '100%', height: '100%', alignItems: 'center', alignItems: 'center', justifyContent: 'center' }}>
       <TextInput keyboardType='numeric' placeholder='Введи рубли'
-        value={state.rubles.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB',minimumFractionDigits:0})}
+        value={state.rubles} //.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB',minimumFractionDigits:0})}
         onChangeText={onChangeText}
       />
 
