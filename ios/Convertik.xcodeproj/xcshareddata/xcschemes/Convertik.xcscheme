@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "NewTestPro.app"
-               BlueprintName = "NewTestPro"
-               ReferencedContainer = "container:NewTestPro.xcodeproj">
+               BuildableName = "Convertik.app"
+               BlueprintName = "Convertik"
+               ReferencedContainer = "container:Convertik.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "00E356ED1AD99517003FC87E"
-               BuildableName = "NewTestProTests.xctest"
-               BlueprintName = "NewTestProTests"
-               ReferencedContainer = "container:NewTestPro.xcodeproj">
+               BuildableName = "ConvertikTests.xctest"
+               BlueprintName = "ConvertikTests"
+               ReferencedContainer = "container:Convertik.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>
@@ -55,9 +55,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "NewTestPro.app"
-            BlueprintName = "NewTestPro"
-            ReferencedContainer = "container:NewTestPro.xcodeproj">
+            BuildableName = "Convertik.app"
+            BlueprintName = "Convertik"
+            ReferencedContainer = "container:Convertik.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </LaunchAction>
@@ -72,9 +72,9 @@
          <BuildableReference
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "NewTestPro.app"
-            BlueprintName = "NewTestPro"
-            ReferencedContainer = "container:NewTestPro.xcodeproj">
+            BuildableName = "Convertik.app"
+            BlueprintName = "Convertik"
+            ReferencedContainer = "container:Convertik.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
    </ProfileAction>

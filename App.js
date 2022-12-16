@@ -27,7 +27,7 @@ const App = () => {
           base: 'RUB',
         },
         headers: {
-          apikey: 'YJgSxDxtZvVJAoAD8PPsUlSjPZkRBO7G'
+          apikey: 'dOlPBagbrjZHQKlDfaHSWCp25cqVb4YL'
         }
       });
       setRates(response.data.rates);
@@ -36,7 +36,7 @@ const App = () => {
     }
   };
   
-  React.useEffect(() => {
+  React.useEffect(() =>{
     fetchCurrencies();
   }, []);
   
@@ -93,6 +93,7 @@ const App = () => {
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
             placeholder="Рубли"
+            keyboardType='numeric' 
           //  rightIconSource='MM'
             onChangeText={onChangeText}
             value={state.rubles.toString()}//.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'})}
