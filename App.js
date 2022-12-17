@@ -3,6 +3,7 @@ import React from 'react';
 import { TextInput,ActivityIndicator, StyleSheet } from 'react-native';
 import axios from 'axios';
 
+import {useColorScheme} from 'react-native';
 //import {Component} from 'react';
 import {View, TextField, Text, Button} from 'react-native-ui-lib';
 
@@ -48,6 +49,8 @@ const App = () => {
       dollars: rates['USD'] * rubles,
     }));
   };
+
+  const colorScheme = useColorScheme();
   
   const MAX_RUBLES = 9223372036854775807;
 
@@ -75,8 +78,9 @@ const App = () => {
   }
   else{
     return (
-      <View flex paddingH-25 paddingT-120>
+      <View flex paddingH-25 paddingT-120 >
           <Text blue50 text20>Конвертик</Text>
+          <Text>useColorScheme(): {colorScheme}</Text>
           {/* <TextField 
             text50
             placeholder='Введи рубли'

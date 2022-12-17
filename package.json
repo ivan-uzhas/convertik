@@ -12,6 +12,7 @@
   "dependencies": {
     "@react-native-async-storage/async-storage": "~1.17.3",
     "@react-native-community/blur": "^3.4.1",
+    "@react-native-community/cli": "^10.0.0",
     "@react-native-community/datetimepicker": "6.2.0",
     "@react-native-community/masked-view": "0.1.10",
     "@react-native-community/netinfo": "9.3.0",
@@ -25,6 +26,7 @@
     "react": "18.1.0",
     "react-native": "0.70.6",
     "react-native-animatable": "latest",
+    "react-native-eject": "^0.2.0",
     "react-native-gesture-handler": "~2.5.0",
     "react-native-navigation": "latest",
     "react-native-reanimated": "^2.13.0",
