@@ -34,10 +34,10 @@ const App = () => {
   setTheme(darkTheme);
 
   const [state, setState] = React.useState({
-    rubles: 1,
-    lari: 1,
-    euro: 1,
-    dollars: 1,
+    rubles: 0,
+    lari: 0,
+    euro: 0,
+    dollars: 0,
   });
 
   const [rates, setRates] = React.useState(null);
@@ -166,14 +166,15 @@ const App = () => {
   }
   else{
     return (
-      <View flex paddingH-25 paddingT-120 bg-screenBG>
- 
-          <View center >
+      <View flex paddingH-20 paddingT-50 bg-screenBG>
+          <View >
             <Text blue50 text20 >Конвертик </Text>
+          </View>
+          <View right>
             <Switch value={darkTheme} onValueChange={value => setDarkTheme(value)} />
           </View>
           <TextField 
-            text50
+            text60
             textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
@@ -184,32 +185,35 @@ const App = () => {
             value={state.rubles.toFixed(2).toString()}
           />
           <TextField 
-            text50
+            text60
             textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
             placeholder={'Лари ('+(1/rates['GEL']).toFixed(2)+')'}
+            keyboardType='numeric' 
             onChangeText={onChangeLar}
             clearTextOnFocus
             value={state.lari.toFixed(2).toString()}
           />
           <TextField
-            text50
+            text60
             textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
             onChangeText={onChangeEur}
             placeholder={'Евро ('+(1/rates['EUR']).toFixed(2)+')'}
+            keyboardType='numeric' 
             clearTextOnFocus
             value={state.euro.toFixed(2).toString()}
           />
           <TextField
-            text50
+            text60
             textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
             onChangeText={onChangeUsd}
             placeholder={'Доллары ('+(1/rates['USD']).toFixed(2)+')'}
+            keyboardType='numeric' 
             clearTextOnFocus
             value={state.dollars.toFixed(2).toString()}
           />
