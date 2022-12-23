@@ -41,6 +41,9 @@ const App = () => {
   });
 
   const [rates, setRates] = React.useState(null);
+  //const [upd, setUpd] = React.useState({
+  //  updateDate:'Не получены курсы',
+  //});
 
   const fetchCurrencies = async () => {
     try {
@@ -53,6 +56,19 @@ const App = () => {
         }
       });
       setRates(response.data.rates);
+      // timest = response.data.timestamp;
+      // console.log(timest);
+      // upde = new Date(timest * 1000);
+      // updateDate = upde.toLocaleString('ru-RU', {
+      //   hour: 'numeric',
+      //   minute: 'numeric',
+      //   second: 'numeric',
+      //   day: 'numeric',
+      //   month: 'numeric',
+      //   year: 'numeric',
+      // });
+      // setUpd(updateDate);
+      // console.log(updateDate);
     } catch (error) {
       console.error('Error fetching rates:', error);
     }
@@ -62,7 +78,7 @@ const App = () => {
     fetchCurrencies();
   }, []);
   
-  const calculateValues = (rubles) => {
+  const calculateFromRubles = (rubles) => {
     setState((prevState) => ({
       ...prevState,
       lari: rates['GEL'] * rubles,
@@ -70,21 +86,70 @@ const App = () => {
       dollars: rates['USD'] * rubles,
     }));
   };
+  const calculateFromLary = (lari) => {
+    setState((prevState) => ({
+      ...prevState,
+      rubles: lari / rates['GEL'],
+      euro: rates['EUR'] * (lari / rates['GEL']),
+      dollars: rates['USD'] * (lari / rates['GEL']),
+    }));
+  };
+
+  const calculateFromEur = (euro) => {
+    setState((prevState) => ({
+      ...prevState,
+      rubles: euro / rates['EUR'],
+      lari: rates['GEL'] * (euro / rates['EUR']),
+      dollars: rates['USD'] * (euro / rates['EUR']),
+    }));
+  };
+
+  const calculateFromUsd = (dollars) => {
+    setState((prevState) => ({
+      ...prevState,
+      rubles: dollars / rates['USD'],
+      euro: rates['EUR'] * (dollars / rates['USD']),
+      lari: rates['GEL'] * (dollars / rates['USD']),
+    }));
+  };
 
   const colorScheme = useColorScheme();
   
   const MAX_RUBLES = 9223372036854775807;
 
-  const onChangeText = (text) => {
-    let rubles = parseInt(text);
-    if (isNaN(rubles)) {
-      rubles = 0;
+  const checkVal = (text) => {
+    let val = parseInt(text);
+    if (isNaN(val)) {
+      val = 0;
     }
-    if (rubles > MAX_RUBLES) {
-      rubles = MAX_RUBLES;
+    if (val > MAX_RUBLES) {
+      val = MAX_RUBLES;
     }
-    setState((prevState) => ({ ...prevState, rubles }));
-    calculateValues(rubles);
+    return val;
+  }
+
+  const onChangeRub = (text) => {
+    text = checkVal(text);
+    setState((prevState) => ({ ...prevState, text }));
+    calculateFromRubles(text);
+  };
+
+  const onChangeLar = (text) => {
+    text = checkVal(text);
+    setState((prevState) => ({ ...prevState, text }));
+    calculateFromLary(text);
+  };
+
+  const onChangeEur = (text) => {
+    text = checkVal(text);
+    setState((prevState) => ({ ...prevState, text }));
+    calculateFromEur(text);
+  };
+
+  const onChangeUsd = (text) => {
+    text = checkVal(text);
+    setState((prevState) => ({ ...prevState, text }));
+    calculateFromUsd(text);
   };
 
   if (!rates){
@@ -92,8 +157,9 @@ const App = () => {
       <View flex paddingH-25 paddingT-120 bg-screenBG>
         <Text blue50 text20 containerStyle={{marginBottom: INPUT_SPACING}} >Конвертик</Text>
         <Text text60 textColor containerStyle={{marginBottom: INPUT_SPACING}}>Загрузка курса валют</Text>
-        <Switch value={darkTheme} onValueChange={value => setDarkTheme(value)} />
         <ActivityIndicator size="large"/>
+
+        <Switch value={darkTheme} onValueChange={value => setDarkTheme(value)} />
         
       </View>
     );
@@ -101,19 +167,11 @@ const App = () => {
   else{
     return (
       <View flex paddingH-25 paddingT-120 bg-screenBG>
-          <Text blue50 text20 >Конвертик</Text>
-          <Switch value={darkTheme} onValueChange={value => setDarkTheme(value)} />
-          {/* <TextField 
-            text50
-            placeholder='Введи рубли'
-            containerStyle={{marginBottom: INPUT_SPACING}}
-            keyboardType='numeric' 
-            //floatingPlaceholder 
-            helperText="this is an helper text"
-            value={state.rubles}//.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB',minimumFractionDigits:0})}
-            onChangeText={onChangeText}
-
-          /> */}
+ 
+          <View center >
+            <Text blue50 text20 >Конвертик </Text>
+            <Switch value={darkTheme} onValueChange={value => setDarkTheme(value)} />
+          </View>
           <TextField 
             text50
             textColor
@@ -121,46 +179,44 @@ const App = () => {
             floatingPlaceholder
             placeholder="Рубли"
             keyboardType='numeric' 
-          //  rightIconSource='MM'
-            onChangeText={onChangeText}
-            value={state.rubles.toString()}//.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'})}
+            clearTextOnFocus
+            onChangeText={onChangeRub}
+            value={state.rubles.toFixed(2).toString()}
           />
-           {/* <Text>{rates['GEL']}</Text> */}
           <TextField 
-            text60
+            text50
             textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
-            placeholder={'Лари ('+rates['GEL'].toFixed(2)+')'}
-            //multiline
-            value={state.lari.toFixed(2).toString()}//.toLocaleString('ka-GE', {style: 'currency', currency: 'GEL'})}
+            placeholder={'Лари ('+(1/rates['GEL']).toFixed(2)+')'}
+            onChangeText={onChangeLar}
+            clearTextOnFocus
+            value={state.lari.toFixed(2).toString()}
           />
           <TextField
-            text60
+            text50
             textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
-            placeholder={'Евро ('+rates['EUR'].toFixed(2)+')'}
-            //multiline
-            value={state.euro.toFixed(2).toString()}//.toLocaleString('de-DE', {style: 'currency', currency: 'EUR'})}
+            onChangeText={onChangeEur}
+            placeholder={'Евро ('+(1/rates['EUR']).toFixed(2)+')'}
+            clearTextOnFocus
+            value={state.euro.toFixed(2).toString()}
           />
           <TextField
-            text60
+            text50
             textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
-            placeholder={'Доллары ('+rates['USD'].toFixed(2)+')'}
-            //multiline
-            value={state.dollars.toFixed(2).toString()}//.toLocaleString('en-US', {/*format: '#,##0.00 ¤', */style: 'currency', currency: 'USD'})}
+            onChangeText={onChangeUsd}
+            placeholder={'Доллары ('+(1/rates['USD']).toFixed(2)+')'}
+            clearTextOnFocus
+            value={state.dollars.toFixed(2).toString()}
           />
-      {/* <Text>Рубли: {state.rubles.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'})}</Text>
-      <Text>Лари: {state.lari.toLocaleString('ka-GE', {style: 'currency', currency: 'GEL'})}</Text>
-      <Text>Евро: {state.euro.toLocaleString('de-DE', {style: 'currency', currency: 'EUR'})}</Text>
-      <Text>Доллары: {state.dollars.toLocaleString('en-US', {/*format: '#,##0.00 ¤', style: 'currency', currency: 'USD'})}</Text> */}
-    </View>
-    
-  );
-        };
+          {/* <Text>Дата обновления: {upd.updateDate}</Text> */}
+      </View>
+    );
+  };
 };
 
 export default App;
