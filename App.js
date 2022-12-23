@@ -5,13 +5,34 @@ import axios from 'axios';
 
 import {useColorScheme} from 'react-native';
 //import {Component} from 'react';
-import {View, TextField, Text, Button} from 'react-native-ui-lib';
+import {View, TextField, Text, Button, Switch, Colors} from 'react-native-ui-lib';
+// import { View, Text, Switch, Colors}from "react-native-ui-lib";
+Colors.loadSchemes({
+  light: {
+    screenBG: Colors.white,
+    textColor: Colors.grey10,
+  },
+  dark: {
+    screenBG: Colors.grey10,
+    textColor: Colors.white,
+  },
+});
 
 const CURRENCIES_API_URL = 'https://api.apilayer.com/exchangerates_data/latest';
 
 const INPUT_SPACING = 10;
 
+
+const setTheme = (dark: boolean): void => {
+  Colors.setScheme(dark ? 'dark' : 'light');
+};
+
 const App = () => {
+
+  const [darkTheme, setDarkTheme] = React.useState(false);
+  
+  setTheme(darkTheme);
+
   const [state, setState] = React.useState({
     rubles: 1,
     lari: 1,
@@ -68,9 +89,10 @@ const App = () => {
 
   if (!rates){
     return (
-      <View flex paddingH-25 paddingT-120 >
-        <Text blue50 text20 containerStyle={{marginBottom: INPUT_SPACING}}>Конвертик</Text>
-        <Text text60 containerStyle={{marginBottom: INPUT_SPACING}}>Загрузка курса валют</Text>
+      <View flex paddingH-25 paddingT-120 bg-screenBG>
+        <Text blue50 text20 containerStyle={{marginBottom: INPUT_SPACING}} >Конвертик</Text>
+        <Text text60 textColor containerStyle={{marginBottom: INPUT_SPACING}}>Загрузка курса валют</Text>
+        <Switch value={darkTheme} onValueChange={value => setDarkTheme(value)} />
         <ActivityIndicator size="large"/>
         
       </View>
@@ -78,9 +100,9 @@ const App = () => {
   }
   else{
     return (
-      <View flex paddingH-25 paddingT-120 >
-          <Text blue50 text20>Конвертик</Text>
-          <Text>useColorScheme(): {colorScheme}</Text>
+      <View flex paddingH-25 paddingT-120 bg-screenBG>
+          <Text blue50 text20 >Конвертик</Text>
+          <Switch value={darkTheme} onValueChange={value => setDarkTheme(value)} />
           {/* <TextField 
             text50
             placeholder='Введи рубли'
@@ -92,8 +114,9 @@ const App = () => {
             onChangeText={onChangeText}
 
           /> */}
-          <TextField
+          <TextField 
             text50
+            textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
             placeholder="Рубли"
@@ -103,8 +126,9 @@ const App = () => {
             value={state.rubles.toString()}//.toLocaleString('ru-RU', {style: 'currency', currency: 'RUB'})}
           />
            {/* <Text>{rates['GEL']}</Text> */}
-          <TextField
+          <TextField 
             text60
+            textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
             placeholder={'Лари ('+rates['GEL'].toFixed(2)+')'}
@@ -113,6 +137,7 @@ const App = () => {
           />
           <TextField
             text60
+            textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
             placeholder={'Евро ('+rates['EUR'].toFixed(2)+')'}
@@ -121,6 +146,7 @@ const App = () => {
           />
           <TextField
             text60
+            textColor
             containerStyle={{marginBottom: INPUT_SPACING}}
             floatingPlaceholder
             placeholder={'Доллары ('+rates['USD'].toFixed(2)+')'}
