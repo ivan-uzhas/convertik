@@ -67,6 +67,8 @@ export const DetailsScreen = ({ navigation }) => {
                 Ночь / День
             </Button>
             <Text style={styles.text} category='h4'>О приложении</Text>
+            <Text style={styles.text}>Версия: 0.1 (29.12.2022)</Text>
+            <Text style={styles.text}>Разработчик: Владимир Языджи</Text>
         </Layout>
     </SafeAreaView>
   );
