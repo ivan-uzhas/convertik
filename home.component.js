@@ -2,6 +2,7 @@ import React from 'react';
 import { SafeAreaView, StyleSheet } from 'react-native';
 import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input  } from '@ui-kitten/components';
 import axios from 'axios';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
   const InfoIcon = (props) => (
     <Icon {...props} name='info-outline'/>
@@ -55,26 +56,45 @@ export const HomeScreen = ({ navigation }) => {
         }
       });
       setRates(response.data.rates);
-      // timest = response.data.timestamp;
-      // console.log(timest);
-      // upde = new Date(timest * 1000);
-      // updateDate = upde.toLocaleString('ru-RU', {
-      //   hour: 'numeric',
-      //   minute: 'numeric',
-      //   second: 'numeric',
-      //   day: 'numeric',
-      //   month: 'numeric',
-      //   year: 'numeric',
-      // });
-      // setUpd(updateDate);
-      // console.log(response);
+
+      response.data.rates.update_date = new Date().toISOString(); // Добавляем текущую дату
+      await AsyncStorage.setItem('key', JSON.stringify(response.data.rates)); // записываем в AsSt
+      console.log("UPDATED:",JSON.stringify(response.data.rates.update_date));
+
     } catch (error) {
       console.error('Error fetching rates:', error);
     }
   };
 
+  const updateCurrencies= async () => {
+    try {
+      const value = await AsyncStorage.getItem('key'); // получение данных
+
+      if (value !== null) {
+        const object = JSON.parse(value);
+
+        const toDay = new Date();
+        const updDay = new Date(object.update_date.toString());
+        toDay.setDate(toDay.getDate() - 1);
+        if (toDay.getTime() < updDay.getTime()){ // разница между сохраненным значением и сегодняшней датой меньше суток
+          console.log("toDay < updDay ! Use AsSt");
+          setRates(object);
+        } else { // разница между сохраненным значением и сегодняшней датой больше суток
+          console.log("toDay >= updDay ! Use fetchCurrencies");
+          fetchCurrencies();
+        }
+      } else {
+        fetchCurrencies();
+      } 
+
+    } catch (error) {
+      console.error('Error updating rates:', error);
+    }
+  };
+
   React.useEffect(() =>{
-    fetchCurrencies();
+    //fetchCurrencies();
+    updateCurrencies();
   }, []);
 
 
