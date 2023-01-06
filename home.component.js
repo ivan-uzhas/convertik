@@ -197,7 +197,7 @@ export const HomeScreen = ({ navigation }) => {
         <Input
             style={styles.input}
             placeholder=''
-            size='large'
+            size='medium'
             keyboardType='numeric' 
             clearTextOnFocus
             onChangeText={onChangeRub}
@@ -206,7 +206,7 @@ export const HomeScreen = ({ navigation }) => {
         <Text style={styles.text} category='s1'>Лари</Text>
         <Input
             style={styles.input}
-            size='large'
+            size='medium'
             keyboardType='numeric' 
             clearTextOnFocus
             onChangeText={onChangeLar}
@@ -215,7 +215,7 @@ export const HomeScreen = ({ navigation }) => {
         <Text style={styles.text} category='s1'>Евро</Text>
         <Input
             style={styles.input}
-            size='large'
+            size='medium'
             keyboardType='numeric' 
             clearTextOnFocus
             onChangeText={onChangeEur}
@@ -224,7 +224,7 @@ export const HomeScreen = ({ navigation }) => {
         <Text style={styles.text} category='s1'>Доллары</Text>
         <Input
             style={styles.input}
-            size='large'
+            size='medium'
             keyboardType='numeric' 
             clearTextOnFocus
             value={state.dollars.toString()}
@@ -233,7 +233,7 @@ export const HomeScreen = ({ navigation }) => {
         <Text style={styles.text} category='s1'>Шекели</Text>
         <Input
             style={styles.input}
-            size='large'
+            size='medium'
             keyboardType='numeric' 
             clearTextOnFocus
             value={state.ils.toString()}
