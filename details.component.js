@@ -1,7 +1,8 @@
-import React from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState, useEffect }from 'react';
+import { StyleSheet, SafeAreaView, AppState} from 'react-native';
 import { Divider, Icon, Layout, Text, Button, TopNavigation, TopNavigationAction} from '@ui-kitten/components';
 import { ThemeContext } from './theme-context';
+import config from './app.json';
 
 const BackIcon = (props) => (
     <Icon {...props} name='arrow-back' />
@@ -52,6 +53,18 @@ export const DetailsScreen = ({ navigation }) => {
     <TopNavigationAction icon={CloseIcon} onPress={navigateBack}/>
   );
 
+  const [appState, setAppState] = useState({
+    version: '',
+    buildDate: '',
+  });
+
+  useEffect(() => {
+    setAppState({
+      version: config.version,
+      buildDate: config.buildDate,
+    });
+  }, []);
+
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
@@ -67,8 +80,9 @@ export const DetailsScreen = ({ navigation }) => {
                 Ночь / День
             </Button>
             <Text style={styles.text} category='h4'>О приложении</Text>
-            <Text style={styles.text}>Версия: 0.1 (29.12.2022)</Text>
-            <Text style={styles.text}>Разработчик: Владимир Языджи</Text>
+            <Text style={styles.text} >Версия приложения: {appState.version}</Text>
+            <Text style={styles.text} >Дата сборки: {appState.buildDate}</Text>
+            <Text style={styles.text} >Разработчик: Владимир Языджи</Text>
         </Layout>
     </SafeAreaView>
   );

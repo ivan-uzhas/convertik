@@ -1,4 +1,6 @@
 {
   "name": "Convertik",
-  "displayName": "Convert'ik"
+  "displayName": "Convert'ik",
+  "version" : "0.1",
+  "buildDate" : "07.01.2022"
 }

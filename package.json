@@ -23,6 +23,7 @@
     "@ui-kitten/components": "^5.1.2",
     "@ui-kitten/eva-icons": "^5.1.2",
     "axios": "^1.2.1",
+    "cors": "^2.8.5",
     "currency-symbol-map": "^5.1.0",
     "lodash": "latest",
     "native-base": "^3.4.25",
