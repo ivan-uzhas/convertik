@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, ScrollView } from 'react-native';
-import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List, Card } from '@ui-kitten/components';
+import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List, Card, InputClearButton} from '@ui-kitten/components';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormattedCurrency, FormattedNumber, FormattedMessage, IntlProvider } from 'react-intl';
@@ -198,7 +198,6 @@ export const HomeScreen = ({ navigation }) => {
     <Icon {...props} name='trash-outline' />
   );
 
-
   const HeadCard = (currency, value) => (
     <Text style={styles.text} category='h6'>
       {currency}: {value}
@@ -229,6 +228,10 @@ export const HomeScreen = ({ navigation }) => {
         clearTextOnFocus
         onChangeText={(text) => onChange(text, currency)}
         value={value.toString()}
+        clearButtonMode='while-editing' 
+      //  accessoryRight={ClearButton}
+        clearButton= {() => <Icon name='close-outline' fill='red'/>} // это не работет
+        clearButtonStyle={styles.clearButton}
       />
     </Card>
   );
@@ -291,5 +294,8 @@ const styles = StyleSheet.create({
   },
   input: {
     width: '100%',
+  },
+  clearButton: {
+    color: 'red',
   },
 });
