@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
 import { SafeAreaView, StyleSheet, ScrollView } from 'react-native';
-import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List } from '@ui-kitten/components';
+import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List, Card } from '@ui-kitten/components';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormattedCurrency, FormattedNumber, FormattedMessage, IntlProvider } from 'react-intl';
@@ -10,19 +10,6 @@ import { View } from 'react-native-animatable';
 const InfoIcon = (props) => (
   <Icon {...props} name='info-outline' />
 );
-
-const styles = StyleSheet.create({
-  text: {
-    marginTop: 15,
-    marginLeft: 20,
-    marginRight: 20,
-  },
-  input: {
-    marginTop: 10,
-    marginLeft: 20,
-    marginRight: 20,
-  },
-});
 
 const CURRENCIES_API_URL = 'https://api.apilayer.com/exchangerates_data/latest';
 
@@ -79,14 +66,14 @@ export const HomeScreen = ({ navigation }) => {
     // удаление валюты
     const { [currency]: _, ...newCurrencies } = state.cur;
     setState({ cur: newCurrencies });
-  
-    console.log("DELETE currency:", currency, "NEW cur:", (state.cur), "NEW { cur: newCurrencies }", {cur: newCurrencies });
+
+    console.log("DELETE currency:", currency, "NEW cur:", (state.cur), "NEW { cur: newCurrencies }", { cur: newCurrencies });
   };
-  
+
   React.useEffect(() => {
     // сохранение обновленного списка валют в AsyncStorage
 
-   // AsyncStorage.removeItem('currenciesList');
+    // AsyncStorage.removeItem('currenciesList');
     AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
   }, [state.cur]);
 
@@ -105,7 +92,7 @@ export const HomeScreen = ({ navigation }) => {
 
       response.data.rates.update_date = new Date().toISOString(); // Добавляем текущую дату
       await AsyncStorage.setItem('exchange', JSON.stringify(response.data.rates)); // записываем в AsSt
-     // console.log("UPDATED:", JSON.stringify(response.data.rates.update_date));
+      // console.log("UPDATED:", JSON.stringify(response.data.rates.update_date));
 
       setRates(response.data.rates);
 
@@ -208,8 +195,44 @@ export const HomeScreen = ({ navigation }) => {
   };
 
   const DelIcon = (props) => (
-    <Icon {...props} name='trash-outline'/>
+    <Icon {...props} name='trash-outline' />
   );
+
+
+  const HeadCard = (currency, value) => (
+    <Text style={styles.text} category='h6'>
+      {currency}: {value}
+    </Text>
+  );
+
+  const DelCard = (currency) => (
+    <Button
+        name='trash-2-outline2'
+        onPress={() => removeCurrency(currency)}
+        
+      />
+  );
+
+  const Header = ({ currency, value, onPress }) => (
+    <View style={styles.header}>
+      <Text style={styles.text}>{currency}: {value}</Text>
+      <Button onPress={onPress} style={styles.delButton} accessoryLeft={DelIcon} appearance='ghost'/>
+    </View>
+  );
+  
+  const renderItem = ({ currency, value, index }) => (
+    <Card key={index} style={styles.card} header={() => <Header currency={currency} value={value} onPress={() => removeCurrency(currency)} />}>
+      <Input
+        style={styles.input}
+        size='medium'
+        keyboardType='numeric'
+        clearTextOnFocus
+        onChangeText={(text) => onChange(text, currency)}
+        value={value.toString()}
+      />
+    </Card>
+  );
+
 
   if (!rates) {
     return (
@@ -230,31 +253,7 @@ export const HomeScreen = ({ navigation }) => {
           <Divider />
           <ScrollView>
             <Layout style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-              {Object.entries(state.cur).map(([currency, value]) => (
-                <ListItem
-                  key={currency}
-                  title={<CurrencyName currencyCode={currency} />}
-                  accessoryRight={() => <Icon name='trash-2-outline' onPress={() => removeCurrency(currency)} />}
-                >
-                  <Text style={styles.text} category='s1'>
-                    <CurrencyName currencyCode={currency} />
-                  </Text>
-                  <Input
-                    style={styles.input}
-                    size='medium'
-                    keyboardType='numeric'
-                    clearTextOnFocus
-                    onChangeText={(text) => onChange(text, currency)}
-                    value={value.toString()}
-                  />
-                  <Button 
-                    name='trash-2-outline2' 
-                    onPress={() => removeCurrency(currency)}
-                    accessoryLeft={DelIcon}
-                    appearance='ghost'
-                  />
-                </ListItem>
-              ))}
+              {Object.entries(state.cur).map(([currency, value], index) => renderItem({ currency, value, index }))}
             </Layout>
           </ScrollView>
         </SafeAreaView>
@@ -262,3 +261,35 @@ export const HomeScreen = ({ navigation }) => {
     );
   };
 };
+
+const styles = StyleSheet.create({
+  topContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  card: {
+    width: '100%',
+    flex: 1,
+    margin: 2,
+  },
+  footerContainer: {
+    flexDirection: 'row',
+    justifyContent: 'flex-end',
+  },
+  footerControl: {
+    marginHorizontal: 2,
+  },
+  header: {
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center'
+  },
+  text: {
+    marginTop: 15,
+    marginLeft: 20,
+    marginRight: 20,
+  },
+  input: {
+    width: '100%',
+  },
+});
