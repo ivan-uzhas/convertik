@@ -1,6 +1,6 @@
 import React, { useEffect } from 'react';
-import { SafeAreaView, StyleSheet, ScrollView } from 'react-native';
-import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List, Card, InputClearButton} from '@ui-kitten/components';
+import { SafeAreaView, StyleSheet, RefreshControl, ScrollView, FlatList } from 'react-native';
+import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List, Card, InputClearButton, Modal } from '@ui-kitten/components';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormattedCurrency, FormattedNumber, FormattedMessage, IntlProvider } from 'react-intl';
@@ -8,294 +8,305 @@ import translations from './translations.json';
 import { View } from 'react-native-animatable';
 
 const InfoIcon = (props) => (
-  <Icon {...props} name='info-outline' />
+	<Icon {...props} name='info-outline' />
 );
 
 const CURRENCIES_API_URL = 'https://api.apilayer.com/exchangerates_data/latest';
 
-
 export const HomeScreen = ({ navigation }) => {
+	const [refreshing, setRefreshing] = React.useState(false);
 
-  const navigateDetails = () => {
-    navigation.navigate('Details');
-  };
+	const onRefresh = () => {
+		setRefreshing(true);
+		// здесь вы можете выполнить любую логику обновления данных
+		async function loadCurrencies() {
+			// получение данных из AsyncStorage
+			const currenciesString = await AsyncStorage.getItem('currenciesList');
+			let currenciesList = JSON.parse(currenciesString);
 
-  const navigateInfo = () => (
-    <TopNavigationAction icon={InfoIcon} onPress={navigateDetails} />
-  );
+			// если данные существуют, обновляем состояние
+			if (currenciesList) {
+				setState({ cur: currenciesList });
+			} else {
+				// данных нет, сохраняем исходный список валют в AsyncStorage
+				await AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
+			}
+		}
+		loadCurrencies();
+		// и после этого установить refreshing в false, чтобы скрыть индикатор обновления
+		setRefreshing(false);
+	  };
 
-  const [state, setState] = React.useState({
-    cur: {
-      ['RUB']: 0,
-      ['GEL']: 0,
-      ['EUR']: 0,
-      ['USD']: 0,
-    }
-  });
+	const navigateDetails = () => {
+		navigation.navigate('Details');
+	};
 
-  React.useEffect(() => {
-    async function loadCurrencies() {
-      // получение данных из AsyncStorage
-      const currenciesString = await AsyncStorage.getItem('currenciesList');
-      let currenciesList = JSON.parse(currenciesString);
+	const navigateInfo = () => (
+		<TopNavigationAction icon={InfoIcon} onPress={navigateDetails} />
+	);
 
-      // если данные существуют, обновляем состояние
-      if (currenciesList) {
-        setState({ cur: currenciesList });
-      } else {
-        // данных нет, сохраняем исходный список валют в AsyncStorage
-        await AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
-      }
-    }
+	const navigateAddScreen = () => {
+		navigation.navigate('Add');
+	};
 
-    loadCurrencies();
-  }, []);
+	const [state, setState] = React.useState({
+		cur: {
+			['RUB']: 0,
+			['GEL']: 0,
+			['EUR']: 0,
+			['USD']: 0,
+		}
+	});
 
-  // функция добавления новой валюты
-  const addCurrency = async (currency) => {
-    // добавление новой валюты
-    const newCurrency = { [currency]: 0 };
-    setState((prevState) => ({
-      cur: { ...prevState.cur, ...newCurrency }
-    }));
+	React.useEffect(() => {
+		async function loadCurrencies() {
+			// получение данных из AsyncStorage
+			const currenciesString = await AsyncStorage.getItem('currenciesList');
+			let currenciesList = JSON.parse(currenciesString);
 
-    // сохранение обновленного списка валют в AsyncStorage
-    await AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
-  };
-  const removeCurrency = (currency) => {
-    // удаление валюты
-    const { [currency]: _, ...newCurrencies } = state.cur;
-    setState({ cur: newCurrencies });
+			// если данные существуют, обновляем состояние
+			if (currenciesList) {
+				setState({ cur: currenciesList });
+			} else {
+				// данных нет, сохраняем исходный список валют в AsyncStorage
+				await AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
+			}
+		}
+		loadCurrencies();
+	}, []);
 
-    console.log("DELETE currency:", currency, "NEW cur:", (state.cur), "NEW { cur: newCurrencies }", { cur: newCurrencies });
-  };
+	// функция добавления новой валюты
+	const addCurrency = async (currency) => {
+		// добавление новой валюты
+		const newCurrency = { [currency]: 0 };
+		setState((prevState) => ({
+			cur: { ...prevState.cur, ...newCurrency }
+		}));
 
-  React.useEffect(() => {
-    // сохранение обновленного списка валют в AsyncStorage
+		// сохранение обновленного списка валют в AsyncStorage
+		await AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
+	};
 
-    // AsyncStorage.removeItem('currenciesList');
-    AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
-  }, [state.cur]);
+	const removeCurrency = (currency) => {
+		// удаление валюты
+		const { [currency]: _, ...newCurrencies } = state.cur;
+		setState({ cur: newCurrencies });
+	};
 
-  const [rates, setRates] = React.useState(null);
+	React.useEffect(() => {
+		// сохранение обновленного списка валют в AsyncStorage
+		AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
+	}, [state.cur]);
 
-  const fetchCurrencies = async () => {
-    try {
-      const response = await axios.get(CURRENCIES_API_URL, {
-        params: {
-          base: 'RUB',
-        },
-        headers: {
-          apikey: '6rOLEhF1PKO8tbicWoLG9wCXSRwlE3hk'
-        }
-      });
+	const [rates, setRates] = React.useState(null);
 
-      response.data.rates.update_date = new Date().toISOString(); // Добавляем текущую дату
-      await AsyncStorage.setItem('exchange', JSON.stringify(response.data.rates)); // записываем в AsSt
-      // console.log("UPDATED:", JSON.stringify(response.data.rates.update_date));
+	const fetchCurrencies = async () => {
+		try {
+			const response = await axios.get(CURRENCIES_API_URL, {
+				params: {
+					base: 'RUB',
+				},
+				headers: {
+					apikey: '6rOLEhF1PKO8tbicWoLG9wCXSRwlE3hk'
+				}
+			});
 
-      setRates(response.data.rates);
+			response.data.rates.update_date = new Date().toISOString(); // Добавляем текущую дату
+			await AsyncStorage.setItem('exchange', JSON.stringify(response.data.rates)); // записываем в AsSt
+			
+			setRates(response.data.rates);
 
-    } catch (error) {
-      console.error('Error fetching rates:', error);
-    }
-  };
+		} catch (error) {
+			console.error('Error fetching rates:', error);
+		}
+	};
 
-  const updateCurrencies = async () => {
-    try {
-      const exchengeRate = await AsyncStorage.getItem('exchange'); // получение данных
+	const updateCurrencies = async () => {
+		try {
+			const exchengeRate = await AsyncStorage.getItem('exchange'); // получение данных
 
-      if (exchengeRate !== null) {
-        const exchange = JSON.parse(exchengeRate);
+			if (exchengeRate !== null) {
+				const exchange = JSON.parse(exchengeRate);
 
-        const toDay = new Date();
-        const updDay = new Date(exchange.update_date.toString());
-        toDay.setDate(toDay.getDate() - 1);
-        if (toDay.getTime() < updDay.getTime()) { // разница между сохраненным значением и сегодняшней датой меньше суток
-          // console.log("toDay < updDay ! Use AsSt");
-          setRates(exchange);
-        } else { // разница между сохраненным значением и сегодняшней датой больше суток
-          //console.log("toDay >= updDay ! Use fetchCurrencies");
-          fetchCurrencies();
-        }
-      } else {
-        fetchCurrencies();
-      }
+				const toDay = new Date();
+				const updDay = new Date(exchange.update_date.toString());
+				toDay.setDate(toDay.getDate() - 1);
+				if (toDay.getTime() < updDay.getTime()) { // разница между сохраненным значением и сегодняшней датой меньше суток
+					setRates(exchange);
+				} else { // разница между сохраненным значением и сегодняшней датой больше суток
+					fetchCurrencies();
+				}
+			} else {
+				fetchCurrencies();
+			}
 
-    } catch (error) {
-      console.error('Error updating rates:', error);
-    }
-  };
+		} catch (error) {
+			console.error('Error updating rates:', error);
+		}
+	};
 
-  React.useEffect(() => {
-    //fetchCurrencies();
-    updateCurrencies();
-  }, []);
+	React.useEffect(() => {
+		updateCurrencies();
+	}, []);
 
-  const checkVal = (text) => { // проверка входного значения
-    const MAX_RUBLES = 9223372036854775807; // максимальное для int
+	const checkVal = (text) => { // проверка входного значения
+		const MAX_RUBLES = 9223372036854775807; // максимальное для int
 
-    let inputCur = parseInt(text);
-    if (isNaN(inputCur)) {
-      inputCur = 0;
-    }
-    if (inputCur > MAX_RUBLES) {
-      inputCur = MAX_RUBLES;
-    }
-    return inputCur;
-  }
+		let inputCur = parseInt(text);
+		if (isNaN(inputCur)) {
+			inputCur = 0;
+		}
+		if (inputCur > MAX_RUBLES) {
+			inputCur = MAX_RUBLES;
+		}
+		return inputCur;
+	}
 
-  const onChange = (text, curCode) => {
-    text = checkVal(text);
+	const onChange = (text, curCode) => {
+		text = checkVal(text);
 
-    setState(prevState => {
-      const newState = { ...prevState };
-      for (const currency in prevState.cur) { // rates OR cur
-        newState.cur[currency] = rates[currency] * (text / rates[curCode]);
-        if (currency === curCode) {
-          newState.cur[currency] = newState.cur[currency].toFixed(0);
-        } else {
-          newState.cur[currency] = newState.cur[currency].toFixed(4);
-        }
+		setState(prevState => {
+			const newState = { ...prevState };
+			for (const currency in prevState.cur) {
+				newState.cur[currency] = rates[currency] * (text / rates[curCode]);
+				if (currency === curCode) {
+					newState.cur[currency] = newState.cur[currency].toFixed(0);
+				} else {
+					newState.cur[currency] = newState.cur[currency].toFixed(4);
+				}
 
-      }
-      return newState;
-    });
-  };
+			}
+			return newState;
+		});
+	};
 
-  // const CurrencyString = ({ currencyCode, value }) => {
-  //   const currencyString = (
-  //     <FormattedNumber
-  //       value={value}
-  //       style="currency"
-  //       currency={currencyCode}
-  //     />
-  //   );
+	const AddCurrencyButton = () => (
+		<Button
+			onPress={navigateAddScreen}
+			accessoryLeft={AddIcon}
+			appearance='ghost'
+		/>
+	);
+	const AddIcon = (props) => (
+		<Icon {...props} name='plus-outline' />
+	);
 
-  //   return currencyString;
-  // };
+	const DelIcon = (props) => (
+		<Icon {...props} name='trash-outline' />
+	);
 
-  // const CurrencyDisplay = ({ currencyCode, values }) => (
-  //   <FormattedCurrency
-  //     values={values}
-  //     currency={currencyCode}
-  //   />
-  // );
+	const Header = ({ currency, value, onPress }) => (
+		<View style={styles.header}>
+			<Text style={styles.text}>{currency}: {value}</Text>
+			<Button onPress={onPress} style={styles.delButton} accessoryLeft={DelIcon} appearance='ghost' />
+		</View>
+	);
 
+	const renderItem = ({ currency, value, index }) => (
+		<Card key={index} style={styles.card} header={() => <Header currency={currency} value={value} onPress={() => removeCurrency(currency)} />}>
+			<Input
+				style={styles.input}
+				size='medium'
+				keyboardType='numeric'
+				clearTextOnFocus
+				onChangeText={(text) => onChange(text, currency)}
+				value={value.toString()}
+				clearButtonMode='while-editing'
+				clearButton={() => <Icon name='close-outline' fill='red' />} // это не работает
+				clearButtonStyle={styles.clearButton}
+			/>
+		</Card>
+	);
 
-  const CurrencyName = ({ currencyCode }) => {
-    const currencyName = (
-      <FormattedMessage
-        id={`currencies.${currencyCode}`}
-        defaultMessage={currencyCode}
-      />
-    );
+	const renderIt = ({ item, index }) => (
+		<Text key={item}>{item}</Text>
+	);
 
-    return currencyName;
-  };
+	if (!rates) {
+		return (
+			<SafeAreaView style={{ flex: 1 }}>
+				<TopNavigation title='Конвертик' alignment='center' accessoryRight={navigateInfo} />
+				<Divider />
+				<Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+					<Text style={styles.text} category='h1'>Загрузка</Text>
+				</Layout>
+			</SafeAreaView>
+		);
+	}
+	else {
+		return (
+			<IntlProvider messages={translations} locale='en'>
+				<SafeAreaView style={{ flex: 1 }}>
 
-  const DelIcon = (props) => (
-    <Icon {...props} name='trash-outline' />
-  );
+					<TopNavigation title='Конвертик' alignment='center' accessoryLeft={navigateInfo}
+						accessoryRight={AddCurrencyButton}
+					/>
+					<Divider />
 
-  const HeadCard = (currency, value) => (
-    <Text style={styles.text} category='h6'>
-      {currency}: {value}
-    </Text>
-  );
-
-  const DelCard = (currency) => (
-    <Button
-        name='trash-2-outline2'
-        onPress={() => removeCurrency(currency)}
-        
-      />
-  );
-
-  const Header = ({ currency, value, onPress }) => (
-    <View style={styles.header}>
-      <Text style={styles.text}>{currency}: {value}</Text>
-      <Button onPress={onPress} style={styles.delButton} accessoryLeft={DelIcon} appearance='ghost'/>
-    </View>
-  );
-  
-  const renderItem = ({ currency, value, index }) => (
-    <Card key={index} style={styles.card} header={() => <Header currency={currency} value={value} onPress={() => removeCurrency(currency)} />}>
-      <Input
-        style={styles.input}
-        size='medium'
-        keyboardType='numeric'
-        clearTextOnFocus
-        onChangeText={(text) => onChange(text, currency)}
-        value={value.toString()}
-        clearButtonMode='while-editing' 
-      //  accessoryRight={ClearButton}
-        clearButton= {() => <Icon name='close-outline' fill='red'/>} // это не работет
-        clearButtonStyle={styles.clearButton}
-      />
-    </Card>
-  );
-
-
-  if (!rates) {
-    return (
-      <SafeAreaView style={{ flex: 1 }}>
-        <TopNavigation title='Конвертик' alignment='center' accessoryRight={navigateInfo} />
-        <Divider />
-        <Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-          <Text style={styles.text} category='h1'>Загрузка</Text>
-        </Layout>
-      </SafeAreaView>
-    );
-  }
-  else {
-    return (
-      <IntlProvider messages={translations} locale='en'>
-        <SafeAreaView style={{ flex: 1 }}>
-          <TopNavigation title='Конвертик' alignment='center' accessoryRight={navigateInfo} />
-          <Divider />
-          <ScrollView>
-            <Layout style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-              {Object.entries(state.cur).map(([currency, value], index) => renderItem({ currency, value, index }))}
-            </Layout>
-          </ScrollView>
-        </SafeAreaView>
-      </IntlProvider>
-    );
-  };
+					<ScrollView 
+							refreshControl={
+							<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+							}
+							>
+						<Layout style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+							{Object.entries(state.cur).map(([currency, value], index) => renderItem({ currency, value, index }))}
+						</Layout>
+					</ScrollView>
+					
+				</SafeAreaView>
+			</IntlProvider>
+		);
+	};
 };
 
 const styles = StyleSheet.create({
-  topContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  card: {
-    width: '100%',
-    flex: 1,
-    margin: 2,
-  },
-  footerContainer: {
-    flexDirection: 'row',
-    justifyContent: 'flex-end',
-  },
-  footerControl: {
-    marginHorizontal: 2,
-  },
-  header: {
-    flexDirection: 'row', 
-    justifyContent: 'space-between', 
-    alignItems: 'center'
-  },
-  text: {
-    marginTop: 15,
-    marginLeft: 20,
-    marginRight: 20,
-  },
-  input: {
-    width: '100%',
-  },
-  clearButton: {
-    color: 'red',
-  },
+	topContainer: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+	},
+	card: {
+		width: '100%',
+		flex: 1,
+		margin: 2,
+	},
+	footerContainer: {
+		flexDirection: 'row',
+		justifyContent: 'flex-end',
+	},
+	footerControl: {
+		marginHorizontal: 2,
+	},
+	header: {
+		flexDirection: 'row',
+		justifyContent: 'space-between',
+		alignItems: 'center'
+	},
+	text: {
+		marginTop: 15,
+		marginLeft: 20,
+		marginRight: 20,
+	},
+	input: {
+		width: '100%',
+	},
+	clearButton: {
+		color: 'red',
+	},
+	container: {
+		position: 'absolute',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+		justifyContent: 'center',
+		alignItems: 'center',
+	},
+	backdrop: {
+		backgroundColor: 'rgba(0, 0, 0, 0.5)',
+	}, 
+	modalContainer: {
+		maxWidth: 300,
+		maxHeight: 600,
+	},
 });
