@@ -6,7 +6,9 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormattedCurrency, FormattedNumber, FormattedMessage, IntlProvider } from 'react-intl';
 import translations from './translations.json';
 import { View } from 'react-native-animatable';
-import curencies_name from './cur_name.json';
+// import curencies_name from './cur_name.json';
+// import curencies_symbol from './common-currency.json';
+import curencies_symbol from './cur.json';
 
 const InfoIcon = (props) => (
 	<Icon {...props} name='info-outline' />
@@ -207,7 +209,8 @@ export const HomeScreen = ({ navigation }) => {
 		<Card 
 			key={index} 
 			style={styles.card} 
-			header={() => <Header currency={curencies_name[currency]} value={'1 '+currency+' = '+(rates["RUB"]/rates[currency]).toFixed(2)+' р.'} onPress={() => removeCurrency(currency)} />}>
+			// header={() => <Header currency={curencies_name[currency]} value={'1 '+curencies_name[currency]+' = '+(rates["RUB"]/rates[currency]).toFixed(2)+' р.'} onPress={() => removeCurrency(currency)} />}>
+			header={() => <Header currency={curencies_symbol[currency].name_ru} value={'1 '+curencies_symbol[currency].symbol+' = '+(rates["RUB"]/rates[currency]).toFixed(2)+' р.'} onPress={() => removeCurrency(currency)} />}>
 			<Input
 				style={styles.input}
 				size='medium'
