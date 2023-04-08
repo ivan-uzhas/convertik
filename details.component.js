@@ -5,7 +5,7 @@ import { ThemeContext } from './theme-context';
 import config from './app.json';
 
 const BackIcon = (props) => (
-	<Icon {...props} name='arrow-back' />
+	<Icon {...props} name='checkmark-outline' />
 );
 
 const CloseIcon = (props) => (

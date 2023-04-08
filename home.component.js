@@ -6,6 +6,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormattedCurrency, FormattedNumber, FormattedMessage, IntlProvider } from 'react-intl';
 import translations from './translations.json';
 import { View } from 'react-native-animatable';
+import curencies_name from './cur_name.json';
 
 const InfoIcon = (props) => (
 	<Icon {...props} name='info-outline' />
@@ -203,7 +204,10 @@ export const HomeScreen = ({ navigation }) => {
 	);
 
 	const renderItem = ({ currency, value, index }) => (
-		<Card key={index} style={styles.card} header={() => <Header currency={currency} value={value} onPress={() => removeCurrency(currency)} />}>
+		<Card 
+			key={index} 
+			style={styles.card} 
+			header={() => <Header currency={curencies_name[currency]} value={'1 '+currency+' = '+(rates["RUB"]/rates[currency]).toFixed(2)+' р.'} onPress={() => removeCurrency(currency)} />}>
 			<Input
 				style={styles.input}
 				size='medium'
@@ -218,9 +222,9 @@ export const HomeScreen = ({ navigation }) => {
 		</Card>
 	);
 
-	const renderIt = ({ item, index }) => (
-		<Text key={item}>{item}</Text>
-	);
+	// const renderIt = ({ item, index }) => (
+	// 	<Text key={item}>{item}</Text>
+	// );
 
 	if (!rates) {
 		return (
@@ -249,10 +253,10 @@ export const HomeScreen = ({ navigation }) => {
 							}
 							>
 						<Layout style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
-							{Object.entries(state.cur).map(([currency, value], index) => renderItem({ currency, value, index }))}
+							{Object.entries(state.cur).map(([currency, value],index) => renderItem({ currency, value, index }))}
 						</Layout>
 					</ScrollView>
-					
+
 				</SafeAreaView>
 			</IntlProvider>
 		);

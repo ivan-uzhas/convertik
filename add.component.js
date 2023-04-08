@@ -5,6 +5,7 @@ import { ThemeContext } from './theme-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from './app.json';
 import { View } from 'react-native-animatable';
+import curencies_name from './cur_name.json';
 
 const BackIcon = (props) => (
 	<Icon {...props} name='arrow-back' />
@@ -147,7 +148,7 @@ export const AddScreen = ({ navigation }) => {
 	const renderItems = ({ item, index }) => (			
 		<ListItem 
 			key={item[0]} 
-			title={`${item[0]} ${item[1]} ${index + 1}`}
+			title={`${curencies_name[item[0]]}: 1 ${item[0]} = ${(rates["RUB"]/item[1]).toFixed(2)} р. `}
 			onPress={() => addCurrency(item[0])}
 		/>		
 	);
