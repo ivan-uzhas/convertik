@@ -5,9 +5,8 @@ import { ThemeContext } from './theme-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import config from './app.json';
 import { View } from 'react-native-animatable';
-// import curencies_name from './cur_name.json';
-// import curencies_symbol from './common-currency.json';
-import curencies_symbol from './cur.json';
+// import curencies_symbol from './cur.json';
+const curencies_symbol = require('./cur.json');
 
 const BackIcon = (props) => (
 	<Icon {...props} name='arrow-back' />
@@ -146,19 +145,35 @@ export const AddScreen = ({ navigation }) => {
 		getCurrencies();
 	}, []);
 
-	const validRates = rates ? Object.entries(rates).filter(([currency]) => /^[A-Z]{3}$/.test(currency)) : [];
 
+	const [filterText, setFilterText] = React.useState('');
+	  
+	const filteredCurrencies = Object.values(curencies_symbol).filter(currency => {
+			const { code, name_ru, name } = currency;
+			const filterLower = filterText.toLowerCase();
+			return (
+				code.toLowerCase().includes(filterLower) ||
+				name_ru.toLowerCase().includes(filterLower) ||
+				name.toLowerCase().includes(filterLower)
+			);			
+	});
+
+	const filteredRates = rates ? Object.entries(rates)
+      	.filter(([currency]) =>
+        	filteredCurrencies.map(({ code }) => code).includes(currency)
+      	)
+  	: [];
+
+	
 	const renderItems = ({ item, index }) => {	
 		if (!(item[0] in curencies_symbol)) {
-			return null; // если нет соответствующего значения, вернуть null
+			return null; 
 		}
 		else {
 			return (
 				<ListItem 
 					key={item[0]} 
 					title={`${curencies_symbol[item[0]].name_ru}: 1 ${curencies_symbol[item[0]].symbol} = ${(rates["RUB"]/item[1]).toFixed(2)} р. `}
-					// title={`${curencies_name[item[0]]}: 1 ${item[0]} = ${(rates["RUB"]/item[1]).toFixed(2)} р. `}
-				//	title={curencies_symbol[item[0]]}
 					onPress={() => addCurrency(item[0])}
 				/>		
 			)
@@ -177,8 +192,7 @@ export const AddScreen = ({ navigation }) => {
 		);
 	}
 	else {
-		console.log("Json 3:", JSON.stringify(Object.entries(rates)));
-		console.log("Json 4:", JSON.stringify(validRates));
+		// console.log("Json 3:", JSON.stringify(Object.entries(rates)));
 		return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<TopNavigation
@@ -187,13 +201,17 @@ export const AddScreen = ({ navigation }) => {
 				accessoryLeft={BackAction}
 				accessoryRight={CloseAction} />
 			<Divider />
-
-				<List
-					data={validRates}
-					// data={Object.entries(rates)}
-					renderItem={renderItems}
-					keyExtractor={([currency]) => currency}
+			<Input
+				placeholder='Начните ввод названия валюты'
+				value={filterText}
+				onChangeText={setFilterText}
 				/>
+
+			<List
+				data={filteredRates}
+				renderItem={renderItems}
+				keyExtractor={([currency]) => currency}
+			/>
 
 		</SafeAreaView>
 		);

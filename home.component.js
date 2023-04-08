@@ -6,8 +6,6 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { FormattedCurrency, FormattedNumber, FormattedMessage, IntlProvider } from 'react-intl';
 import translations from './translations.json';
 import { View } from 'react-native-animatable';
-// import curencies_name from './cur_name.json';
-// import curencies_symbol from './common-currency.json';
 import curencies_symbol from './cur.json';
 
 const InfoIcon = (props) => (
@@ -209,7 +207,6 @@ export const HomeScreen = ({ navigation }) => {
 		<Card 
 			key={index} 
 			style={styles.card} 
-			// header={() => <Header currency={curencies_name[currency]} value={'1 '+curencies_name[currency]+' = '+(rates["RUB"]/rates[currency]).toFixed(2)+' р.'} onPress={() => removeCurrency(currency)} />}>
 			header={() => <Header currency={curencies_symbol[currency].name_ru} value={'1 '+curencies_symbol[currency].symbol+' = '+(rates["RUB"]/rates[currency]).toFixed(2)+' р.'} onPress={() => removeCurrency(currency)} />}>
 			<Input
 				style={styles.input}
@@ -232,7 +229,12 @@ export const HomeScreen = ({ navigation }) => {
 	if (!rates) {
 		return (
 			<SafeAreaView style={{ flex: 1 }}>
-				<TopNavigation title='Конвертик' alignment='center' accessoryRight={navigateInfo} />
+				<TopNavigation 
+					title='Конвертик' 
+					subtitle='обновляется'
+					alignment='center' 
+					accessoryRight={navigateInfo} 
+				/>
 				<Divider />
 				<Layout style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
 					<Text style={styles.text} category='h1'>Загрузка</Text>
@@ -241,11 +243,21 @@ export const HomeScreen = ({ navigation }) => {
 		);
 	}
 	else {
+		const updateDateEntry = Object.entries(rates).find(([currency]) => currency.includes('update_date'));
+		const updateDateString = updateDateEntry ? updateDateEntry[1] : '';
+		const dateUpdate = new Date(updateDateString);
+		const formattedDate = `${('0' + dateUpdate.getDate()).slice(-2)}.${('0' + (dateUpdate.getMonth() + 1)).slice(-2)}.${dateUpdate.getFullYear()} ${('0' + dateUpdate.getHours()).slice(-2)}:${('0' + dateUpdate.getMinutes()).slice(-2)}`;
+
+
 		return (
 			<IntlProvider messages={translations} locale='en'>
 				<SafeAreaView style={{ flex: 1 }}>
 
-					<TopNavigation title='Конвертик' alignment='center' accessoryLeft={navigateInfo}
+					<TopNavigation 
+						title='Конвертик'
+						subtitle={`Курсы обновлены ${formattedDate}`}
+						alignment='center' 
+						accessoryLeft={navigateInfo}
 						accessoryRight={AddCurrencyButton}
 					/>
 					<Divider />
