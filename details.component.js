@@ -27,7 +27,8 @@ export const DetailsScreen = ({ navigation }) => {
 			flexWrap: 'wrap',
 		},
 		button: {
-			margin: 2,
+			margin: 10,
+			marginLeft: 20,
 		},
 		controlContainer: {
 			margin: 2,
@@ -67,17 +68,29 @@ export const DetailsScreen = ({ navigation }) => {
 
 
 	return (
-		<SafeAreaView style={{ flex: 1 }}>
+		<SafeAreaView style={{ flex: 1}}>
 			<TopNavigation
 				title='Конвертик: Инфо'
 				alignment='center'
 				accessoryLeft={BackAction}
 				accessoryRight={CloseAction} />
 			<Divider />
-			<Layout style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'flex-start' }}>
+			<Layout
+				style={{ 
+					flex: 1, 
+					justifyContent: 'flex-start', 
+					alignItems: 'flex-start'
+				 }}>
 				<Text style={styles.text} category='h4'>Настройки</Text>
-				<Button style={styles.button} onPress={themeContext.toggleTheme} appearance='ghost' status='primary'>
-					Ночь / День
+				<Button
+					style={styles.button} 
+					accessoryLeft={<Icon name='moon-outline'/>}
+					accessoryRight={<Icon name='sun-outline'/>}
+					onPress={themeContext.toggleTheme} 
+					// appearance='ghost' 
+					appearance='outline'
+					status='primary'>
+						Ночь или День
 				</Button>
 				<Text style={styles.text} category='h4'>О приложении</Text>
 				<Text style={styles.text} >Версия приложения: {appState.version}</Text>

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, AppState, ScrollView } from 'react-native';
+import { StyleSheet, SafeAreaView, AppState, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List, Card, InputClearButton, Modal } from '@ui-kitten/components';
 import { ThemeContext } from './theme-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -149,12 +149,13 @@ export const AddScreen = ({ navigation }) => {
 	const [filterText, setFilterText] = React.useState('');
 	  
 	const filteredCurrencies = Object.values(curencies_symbol).filter(currency => {
-			const { code, name_ru, name } = currency;
+			const { code, name_ru, name, symbol} = currency;
 			const filterLower = filterText.toLowerCase();
 			return (
 				code.toLowerCase().includes(filterLower) ||
 				name_ru.toLowerCase().includes(filterLower) ||
-				name.toLowerCase().includes(filterLower)
+				name.toLowerCase().includes(filterLower) ||
+				symbol.toLowerCase().includes(filterLower)
 			);			
 	});
 
@@ -163,7 +164,7 @@ export const AddScreen = ({ navigation }) => {
         	filteredCurrencies.map(({ code }) => code).includes(currency)
       	)
   	: [];
-
+	
 	
 	const renderItems = ({ item, index }) => {	
 		if (!(item[0] in curencies_symbol)) {
@@ -173,12 +174,15 @@ export const AddScreen = ({ navigation }) => {
 			return (
 				<ListItem 
 					key={item[0]} 
-					title={`${curencies_symbol[item[0]].name_ru}: 1 ${curencies_symbol[item[0]].symbol} = ${(rates["RUB"]/item[1]).toFixed(2)} р. `}
+					title={`${curencies_symbol[item[0]].name_ru} ${curencies_symbol[item[0]].symbol}`}
+					description={`1 ${curencies_symbol[item[0]].symbol} = ${(rates["RUB"]/item[1]).toFixed(2)} р. `}
 					onPress={() => addCurrency(item[0])}
-				/>		
+				/>
 			)
 		}
 	};
+
+
 
 	if (!rates) {
 		return (
@@ -196,22 +200,27 @@ export const AddScreen = ({ navigation }) => {
 		return (
 		<SafeAreaView style={{ flex: 1 }}>
 			<TopNavigation
-				title='Валюты'
+				title='Добавить валюту'
 				alignment='center'
 				accessoryLeft={BackAction}
 				accessoryRight={CloseAction} />
 			<Divider />
 			<Input
-				placeholder='Начните ввод названия валюты'
+				placeholder='Найти по названию'
+				style={{ marginLeft: 10, marginRight: 10 }}
 				value={filterText}
+				accessoryRight = {<Icon name={'search-outline'}/>}
 				onChangeText={setFilterText}
 				/>
-
-			<List
-				data={filteredRates}
-				renderItem={renderItems}
-				keyExtractor={([currency]) => currency}
-			/>
+			<KeyboardAvoidingView style={{ flex: 1 }} behavior="padding">
+				<List
+					keyboardDismissMode="on-drag"
+					data={filteredRates}
+					renderItem={renderItems}
+					keyExtractor={([currency]) => currency}
+					ItemSeparatorComponent={Divider}
+				/>
+			</KeyboardAvoidingView>
 
 		</SafeAreaView>
 		);
@@ -225,7 +234,7 @@ const styles = StyleSheet.create({
 		justifyContent: 'space-between',
 	},
 	card: {
-		width: '100%',
+		width: '98%',
 		flex: 1,
 		margin: 2,
 	},
@@ -247,7 +256,7 @@ const styles = StyleSheet.create({
 		marginRight: 20,
 	},
 	input: {
-		width: '100%',
+		width: '98%',
 	},
 	clearButton: {
 		color: 'red',

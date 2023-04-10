@@ -647,7 +647,7 @@
         "rounding": 0,
         "code": "ILS",
         "name_plural": "Israeli new sheqels",
-        "name_ru": "\u0418\u0437\u0440\u0430\u0438\u043b\u044c\u0441\u043a\u0438\u0439 \u043d\u043e\u0432\u044b\u0439 Sheqel"
+        "name_ru": "\u0418\u0437\u0440\u0430\u0438\u043b\u044c\u0441\u043a\u0438\u0439 \u043d\u043e\u0432\u044b\u0439 Шекель"
     },
     "IMP": {
         "symbol": "IMP",
@@ -1207,7 +1207,7 @@
         "rounding": 0,
         "code": "RUB",
         "name_plural": "Russian rubles",
-        "name_ru": "\u0420\u0443\u0441\u0441\u043a\u0438\u0439 \u0440\u0443\u0431\u043b\u044c"
+        "name_ru": "Российский рубль"
     },
     "RWF": {
         "symbol": "RWF",

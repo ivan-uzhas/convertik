@@ -489,11 +489,13 @@
 				DEVELOPMENT_TEAM = 8RRKKV98JS;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = Convertik/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Convertik;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = YES;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -501,8 +503,12 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yazydzhi.convertik;
 				PRODUCT_NAME = Convertik;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -516,11 +522,13 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 8RRKKV98JS;
 				INFOPLIST_FILE = Convertik/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = Convertik;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
+				ONLY_ACTIVE_ARCH = NO;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -528,7 +536,11 @@
 				);
 				PRODUCT_BUNDLE_IDENTIFIER = com.yazydzhi.convertik;
 				PRODUCT_NAME = Convertik;
+				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = YES;
 				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;
