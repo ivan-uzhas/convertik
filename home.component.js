@@ -21,20 +21,31 @@ const CURRENCIES_API_URL = 'https://h304122827.nichost.ru/index_c.php';
 export const HomeScreen = ({ navigation }) => {
 	const [refreshing, setRefreshing] = React.useState(false);
 
-	const onRefresh = async () => {
+	const onRefresh = () => {
 		setRefreshing(true);
-		try {
-			await loadCurrencies();
-			setRefreshing(false);
-		} catch (error) {
-			console.error('Error refreshing currencies:', error);
-			setRefreshing(false);
+		// здесь вы можете выполнить любую логику обновления данных
+		async function loadCurrencies() {
+			// получение данных из AsyncStorage
+			const currenciesString = await AsyncStorage.getItem('currenciesList');
+			let currenciesList = JSON.parse(currenciesString);
+
+			// если данные существуют, обновляем состояние
+			if (currenciesList) {
+				setState({ cur: currenciesList });
+			} else {
+				// данных нет, сохраняем исходный список валют в AsyncStorage
+				await AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
+			}
 		}
-	};
+		loadCurrencies();
+		// и после этого установить refreshing в false, чтобы скрыть индикатор обновления
+		setRefreshing(false);
+	  };
 
 	const navigateDetails = () => {
 		navigation.navigate('Details');
 	};
+
 	const navigateInfo = () => (
 		<TopNavigationAction icon={InfoIcon} onPress={navigateDetails} />
 	);
@@ -55,31 +66,27 @@ export const HomeScreen = ({ navigation }) => {
 		}
 	});
 
-	const loadCurrencies = async () => {
-		// получение данных из AsyncStorage
-		const currenciesString = await AsyncStorage.getItem('currenciesList');
-		let currenciesList = JSON.parse(currenciesString);
-
-		// если данные существуют, обновляем состояние
-		if (currenciesList) {
-			setState(prevState => ({ ...prevState, cur: currenciesList }));
-		} else {
-			// исходный список валют сохраняется в AsyncStorage, если он еще не был сохранен
-			await AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
-			currenciesList = state.cur;
-		}
-
-		return currenciesList;
-	};
-
 	React.useEffect(() => {
+		async function loadCurrencies() {
+			// получение данных из AsyncStorage
+			const currenciesString = await AsyncStorage.getItem('currenciesList');
+			let currenciesList = JSON.parse(currenciesString);
+
+			// если данные существуют, обновляем состояние
+			if (currenciesList) {
+				setState({ cur: currenciesList });
+			} else {
+				// данных нет, сохраняем исходный список валют в AsyncStorage
+				await AsyncStorage.setItem('currenciesList', JSON.stringify(state.cur));
+			}
+		}
 		loadCurrencies();
 	}, []);
 
 	const removeCurrency = (currency) => {
 		// удаление валюты
 		const { [currency]: _, ...newCurrencies } = state.cur;
-		setState(prevState => ({ cur: newCurrencies }))
+		setState({ cur: newCurrencies });
 	};
 
 	React.useEffect(() => {
@@ -91,37 +98,66 @@ export const HomeScreen = ({ navigation }) => {
 
 	const fetchCurrencies = async () => {
 		try {
-			const response = await axios.get(CURRENCIES_API_URL//, 
-				// 	{
-				// 	params: {
-				// 		base: 'RUB',
-				// 	},
-				// 	headers: {
-				// 		apikey: '6rOLEhF1PKO8tbicWoLG9wCXSRwlE3hk'
-				// 	}
-				// }
-			);
+			const response = await axios.get(CURRENCIES_API_URL, {
+				params: {
+					base: 'RUB',
+				},
+				headers: {
+					apikey: '6rOLEhF1PKO8tbicWoLG9wCXSRwlE3hk'
+				}
+			});
 
-
-			//setRates(response.data.rates);
-
+			response.data.rates.update_date = new Date().toISOString(); // Добавляем текущую дату
 			await AsyncStorage.setItem('exchange', JSON.stringify(response.data.rates)); // записываем в AsSt
+			
 			setRates(response.data.rates);
+
 		} catch (error) {
 			console.error('Error fetching rates:', error);
 		}
 	};
+
+	// const fetchCurrencies = async () => {
+	// 	try {
+	// 		const response = await axios.get(CURRENCIES_API_URL
+	// 		);
+
+
+	// 		setRates(response.data.rates);
+
+	// 		response.data.rates.update_date = new Date().toISOString(); // Добавляем текущую дату
+	// 		if (response && response.data && response.data.rates){
+	// 			await AsyncStorage.setItem('exchange', JSON.stringify(response.data.rates)); // записываем в AsSt
+	// 			setRates(response.data.rates);
+	// 		}
+	// 		else {
+	// 			console.error('Error updating rates (response && response.data && response.data.rates):', error);
+	// 		}
+	// 	} 
+	// 	catch (error) {
+	// 		console.error('Error fetching rates:', error);
+	// 	}
+	// };
 
 	const updateCurrencies = async () => {
 		try {
 			const exchengeRate = await AsyncStorage.getItem('exchange'); // получение данных
 
 			if (exchengeRate !== null) {
-				const exchange = JSON.parse(exchengeRate || '{}');
-				setRates(exchange);
+				const exchange = JSON.parse(exchengeRate);
+
+				//const toDay = new Date();
+				//const updDay = new Date(exchange.update_date.toString());
+				//toDay.setDate(toDay.getDate() - 1);
+				//if (toDay.getTime() < updDay.getTime()) { // разница между сохраненным значением и сегодняшней датой меньше суток
+				//	setRates(exchange);
+				//} else { // разница между сохраненным значением и сегодняшней датой больше суток
+					fetchCurrencies();
+				//}
 			} else {
 				fetchCurrencies();
 			}
+
 		} catch (error) {
 			console.error('Error updating rates:', error);
 		}
@@ -213,7 +249,6 @@ export const HomeScreen = ({ navigation }) => {
 				clearButtonStyle={styles.clearButton}
 			/>
 		</Card>
-
 	);
 
 	if (!rates) {
@@ -233,9 +268,9 @@ export const HomeScreen = ({ navigation }) => {
 		);
 	}
 	else {
-		const updateDateEntry = Object.entries(rates).find(([currency]) => currency.includes('update_date'));
-		const updateDateString = updateDateEntry ? updateDateEntry[1] : '';
-		const dateUpdate = new Date(updateDateString);
+		// const updateDateEntry = Object.entries(rates).find(([currency]) => currency.includes('update_date'));
+		// const updateDateString = updateDateEntry ? updateDateEntry[1] : '';
+		const dateUpdate = new Date();
 		const formattedDate = `${('0' + dateUpdate.getDate()).slice(-2)}.${('0' + (dateUpdate.getMonth() + 1)).slice(-2)}.${dateUpdate.getFullYear()}`;// ${('0' + dateUpdate.getHours()).slice(-2)}:${('0' + dateUpdate.getMinutes()).slice(-2)}`;
 
 

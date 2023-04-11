@@ -95,14 +95,14 @@ export const AddScreen = ({ navigation }) => {
 			if (exchengeRate !== null) {
 				const exchange = JSON.parse(exchengeRate);
 
-				const toDay = new Date();
-				const updDay = new Date(exchange.update_date.toString());
-				toDay.setDate(toDay.getDate() - 1);
-				if (toDay.getTime() < updDay.getTime()) { // разница между сохраненным значением и сегодняшней датой меньше суток
-					setRates(exchange);
-				} else { // разница между сохраненным значением и сегодняшней датой больше суток
-					fetchCurrencies();
-				}
+				// const toDay = new Date();
+				// const updDay = new Date(exchange.update_date.toString());
+				// toDay.setDate(toDay.getDate() - 1);
+				// if (toDay.getTime() < updDay.getTime()) { // разница между сохраненным значением и сегодняшней датой меньше суток
+				 	setRates(exchange);
+				// } else { // разница между сохраненным значением и сегодняшней датой больше суток
+				//	fetchCurrencies();
+				// }
 			} else {
 				fetchCurrencies();
 			}

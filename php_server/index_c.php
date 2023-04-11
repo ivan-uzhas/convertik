@@ -50,7 +50,9 @@ function downloadExchangeRates($mysqli) {
     curl_close($ch);
 
     // Парсим полученный JSON
-    $rates = json_decode($response, true)["rates"];
+    $rates = json_decode($response, true);
+    // $rates = json_decode($response, true)["rates"];
+    echo $rates;
     $update_date = date("Y-m-d H:i:s"); // Добавляем текущую дату
 
     // Сохраняем курсы валют в БД
