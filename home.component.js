@@ -190,7 +190,7 @@ export const HomeScreen = ({ navigation }) => {
 				if (currency === curCode) {
 					newState.cur[currency] = newState.cur[currency].toFixed(0);
 				} else {
-					newState.cur[currency] = newState.cur[currency].toFixed(4);
+					newState.cur[currency] = newState.cur[currency].toFixed(2);
 				}
 
 			}

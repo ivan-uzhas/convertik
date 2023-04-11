@@ -24,6 +24,28 @@ const CloseIcon = (props) => (
 	  }
 	};
 
+	const privacyLink = async () => {
+		const privLink = 'https://ivan-uzhas.github.io/convertik/privacy_policy_ru.html';
+		const supported = await Linking.canOpenURL(privLink);
+	
+		if (supported) {
+		  await Linking.openURL(privLink);
+		} else {
+		  console.log("Don't know how to open privacyLink");
+		}
+	  };
+
+	  const termsLink = async () => {
+		const termLink = 'https://ivan-uzhas.github.io/convertik/terms_and_conditions_ru.html';
+		const supported = await Linking.canOpenURL(termLink);
+	
+		if (supported) {
+		  await Linking.openURL(termLink);
+		} else {
+		  console.log("Don't know how to open termsLink");
+		}
+	  };
+
 export const DetailsScreen = ({ navigation }) => {
 
 	const themeContext = React.useContext(ThemeContext);
@@ -118,6 +140,9 @@ export const DetailsScreen = ({ navigation }) => {
 					status='primary'>
 						Написать
 				</Button>
+				<Divider />
+				<Text style={styles.text} onPress={privacyLink}>Политика конфиденциальности</Text>
+				<Text style={styles.text} onPress={termsLink}>Усливия использования</Text>
 			</Layout>
 		</SafeAreaView>
 	);

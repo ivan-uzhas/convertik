@@ -202,7 +202,7 @@ export const AddScreen = ({ navigation }) => {
 			<TopNavigation
 				title='Добавить валюту'
 				alignment='center'
-				accessoryLeft={BackAction}
+				//accessoryLeft={BackAction}
 				accessoryRight={CloseAction} />
 			<Divider />
 			<Input
