@@ -35,7 +35,7 @@ export const DetailsScreen = ({ navigation }) => {
 			padding: 6,
 			borderRadius: 4,
 			justifyContent: 'center',
-			backgroundColor: '#3366FF',
+			backgroundColor: '#393646',
 		},
 		row: {
 			flexDirection: 'row',
@@ -73,7 +73,8 @@ export const DetailsScreen = ({ navigation }) => {
 				title='Конвертик: Инфо'
 				alignment='center'
 				accessoryLeft={BackAction}
-				accessoryRight={CloseAction} />
+				// accessoryRight={BackAction} 
+			/>
 			<Divider />
 			<Layout
 				style={{ 

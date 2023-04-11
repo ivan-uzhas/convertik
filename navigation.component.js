@@ -16,7 +16,7 @@ const HomeNavigator = () => {
       screenOptions={{
         headerShown: false,
         headerStyle: { elevation: 0 },
-        cardStyle: { backgroundColor: theme === 'light' ? '#ffffff' : '#242B43' } // устанавливаем цвет фона на основе текущей темы
+        cardStyle: { backgroundColor: theme === 'light' ? '#FFFFFF' : '#242B43' } // устанавливаем цвет фона на основе текущей темы
       }} 
     >
       <Screen name='Home' component={HomeScreen}/>
