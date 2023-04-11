@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, AppState } from 'react-native';
+import { StyleSheet, SafeAreaView, AppState, Linking } from 'react-native';
 import { Divider, Icon, Layout, Text, Button, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { ThemeContext } from './theme-context';
 import config from './app.json';
@@ -12,6 +12,17 @@ const CloseIcon = (props) => (
 	<Icon {...props} name='close-outline' />
 );
 
+
+	const handleTelegramLink = async () => {
+	  const telegramLink = 'https://t.me/yazydzhi';
+	  const supported = await Linking.canOpenURL(telegramLink);
+  
+	  if (supported) {
+		await Linking.openURL(telegramLink);
+	  } else {
+		console.log("Don't know how to open telegram link");
+	  }
+	};
 
 export const DetailsScreen = ({ navigation }) => {
 
@@ -70,7 +81,7 @@ export const DetailsScreen = ({ navigation }) => {
 	return (
 		<SafeAreaView style={{ flex: 1}}>
 			<TopNavigation
-				title='Конвертик: Инфо'
+				title='О приложении'
 				alignment='center'
 				accessoryLeft={BackAction}
 				// accessoryRight={BackAction} 
@@ -79,8 +90,8 @@ export const DetailsScreen = ({ navigation }) => {
 			<Layout
 				style={{ 
 					flex: 1, 
-					justifyContent: 'flex-start', 
-					alignItems: 'flex-start'
+					//justifyContent: 'center', 
+					alignItems: 'center'
 				 }}>
 				<Text style={styles.text} category='h4'>Настройки</Text>
 				<Button
@@ -91,12 +102,22 @@ export const DetailsScreen = ({ navigation }) => {
 					// appearance='ghost' 
 					appearance='outline'
 					status='primary'>
-						Ночь или День
+						Тема
 				</Button>
 				<Text style={styles.text} category='h4'>О приложении</Text>
 				<Text style={styles.text} >Версия приложения: {appState.version}</Text>
 				<Text style={styles.text} >Дата сборки: {appState.buildDate}</Text>
 				<Text style={styles.text} >Разработчик: Владимир Языджи</Text>
+				<Button 
+					style={styles.button} 
+					accessoryLeft={<Icon name='paper-plane-outline'/>}
+					//accessoryRight={<Icon name='sun-outline'/>}
+					onPress={handleTelegramLink} 
+					appearance='ghost' 
+					// appearance='outline'
+					status='primary'>
+						Написать
+				</Button>
 			</Layout>
 		</SafeAreaView>
 	);
