@@ -29,7 +29,7 @@
     "native-base": "^3.4.25",
     "react": "18.2.0",
     "react-intl": "^6.2.5",
-    "react-native": "0.71.6",
+    "react-native": "0.70.5",
     "react-native-animatable": "latest",
     "react-native-eject": "^0.2.0",
     "react-native-gesture-handler": "^2.8.0",

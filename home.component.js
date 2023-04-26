@@ -3,9 +3,8 @@ import { SafeAreaView, StyleSheet, RefreshControl, ScrollView, KeyboardAvoidingV
 import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List, Card, InputClearButton, Modal } from '@ui-kitten/components';
 import axios from 'axios';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { FormattedCurrency, FormattedNumber, FormattedMessage, IntlProvider } from 'react-intl';
-import translations from './translations.json';
-import { View } from 'react-native-animatable';
+// import { FormattedCurrency, FormattedNumber, FormattedMessage, IntlProvider } from 'react-intl';
+// import translations from './translations.json';
 import curencies_symbol from './cur.json';
 
 const InfoIcon = (props) => (
@@ -15,7 +14,7 @@ const AddIcon = (props) => (
 	<Icon {...props} name='plus-outline' />
 );
 
-const CURRENCIES_API_URL = 'https://h304122827.nichost.ru/index_c.php';
+const CURRENCIES_API_URL = 'http://128.199.32.95/index_c.php';
 // const CURRENCIES_API_URL = 'https://api.apilayer.com/exchangerates_data/latest';
 
 export const HomeScreen = ({ navigation }) => {
@@ -275,7 +274,7 @@ export const HomeScreen = ({ navigation }) => {
 
 
 		return (
-			<IntlProvider messages={translations} locale='en'>
+			//<IntlProvider messages={translations} locale='en'>
 				<SafeAreaView style={{ flex: 1 }}>
 
 					<TopNavigation
@@ -299,7 +298,7 @@ export const HomeScreen = ({ navigation }) => {
 						</ScrollView>
 					</KeyboardAvoidingView>
 				</SafeAreaView>
-			</IntlProvider>
+			//</IntlProvider>
 		);
 	};
 };

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, SafeAreaView, AppState, Linking } from 'react-native';
+import { StyleSheet, SafeAreaView, Linking } from 'react-native';
 import { Divider, Icon, Layout, Text, Button, TopNavigation, TopNavigationAction } from '@ui-kitten/components';
 import { ThemeContext } from './theme-context';
 import config from './app.json';

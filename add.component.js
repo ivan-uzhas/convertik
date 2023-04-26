@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { StyleSheet, SafeAreaView, AppState, KeyboardAvoidingView, ScrollView } from 'react-native';
 import { Text, Button, Icon, Divider, Layout, TopNavigation, TopNavigationAction, Input, ListItem, List, Card, InputClearButton, Modal } from '@ui-kitten/components';
 import { ThemeContext } from './theme-context';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import config from './app.json';
-import { View } from 'react-native-animatable';
+// import config from './app.json';
+// import { View } from 'react-native-animatable';
 // import curencies_symbol from './cur.json';
 const curencies_symbol = require('./cur.json');
 

@@ -1,17 +1,21 @@
 <?php
 
 // Определяем параметры для соединения с базой данных
-$host = "h304122827.mysql";
-$username = "h304122827_mysql";
-$password = "kW1tipd_";
-$database = "h304122827_db";
+// $host = "h304122827.mysql";
+// $username = "h304122827_mysql";
+// $password = "kW1tipd_";
+// $database = "h304122827_db";
+$host = "localhost";
+$username = "webuser";
+$password = "xsW@3edc";
+$database = "convertik";
 
 // Устанавливаем соединение с базой данных
 $mysqli = new mysqli($host, $username, $password, $database);
 
 // Проверяем, удалось ли установить соединение
 if ($mysqli->connect_errno) {
-   // echo "Failed to connect to MySQL: " . $mysqli->connect_error;
+   echo "Failed to connect to MySQL: " . $mysqli->connect_error;
     exit();
 }
 
@@ -19,7 +23,7 @@ function downloadExchangeRates($mysqli) {
     // Задаем параметры для запроса к API
     $base_currency = 'RUB';
     $api_key = "6rOLEhF1PKO8tbicWoLG9wCXSRwlE3hk";
-    $api_url = "https://api.apilayer.com/exchangerates_data/latest?base=RUB";
+    $api_url = "http://api.apilayer.com/exchangerates_data/latest";
 
     // Проверяем, прошло ли 6 часов с момента последнего обновления
     $result = $mysqli->query("SELECT update_date FROM exchange_rates ORDER BY id DESC LIMIT 1");
@@ -36,11 +40,9 @@ function downloadExchangeRates($mysqli) {
         "base: $base_currency",
         "apikey: $api_key",
     );
-    curl_setopt($ch, CURLOPT_URL, $api_url);
+    curl_setopt($ch, CURLOPT_URL, $api_url."?base=".$base_currency."&apikey=".$api_key);
     curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-    curl_setopt($ch, CURLOPT_HEADER, 0);
-    curl_setopt($ch, CURLOPT_HTTPHEADER,$headers);
-    // curl_setopt($ch, CURLOPT_POSTFIELDS,'base=RUB');
+    curl_setopt($ch, CURLOPT_HTTPHEADER,http_build_query($headers));
 
     $response = curl_exec($ch);
     if (curl_errno($ch)) { // Если возникла ошибка при выполнении запроса, выводим сообщение об ошибке и выходим из функции
@@ -50,9 +52,9 @@ function downloadExchangeRates($mysqli) {
     curl_close($ch);
 
     // Парсим полученный JSON
-    $rates = json_decode($response, true);
-    // $rates = json_decode($response, true)["rates"];
-    echo $rates;
+    // $rates = json_decode($response, true);
+    $rates = json_decode($response, true)["rates"];
+
     $update_date = date("Y-m-d H:i:s"); // Добавляем текущую дату
 
     // Сохраняем курсы валют в БД
@@ -64,9 +66,6 @@ function downloadExchangeRates($mysqli) {
     $stmt->execute();
     // Закрываем prepared statement
     $stmt->close();
-
-    // Закрываем соединение с базой данных
-   // $mysqli->close();
 }
 
 // Выполняем скачивание курса валют и сохранение в БД
@@ -82,6 +81,5 @@ $update_date = $row["update_date"];
 
 // Возвращаем результат в формат JSON
 echo $json_data_ext;
-// echo $update_date;
 
 ?>
