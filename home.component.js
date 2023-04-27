@@ -15,7 +15,7 @@ const AddIcon = (props) => (
 );
 
 const CURRENCIES_API_URL = 'http://128.199.32.95/index_c.php';
-// const CURRENCIES_API_URL = 'https://api.apilayer.com/exchangerates_data/latest';
+// const CURRENCIES_API_URL = 'http://api.apilayer.com/exchangerates_data/latest';
 
 export const HomeScreen = ({ navigation }) => {
 	const [refreshing, setRefreshing] = React.useState(false);
@@ -105,9 +105,11 @@ export const HomeScreen = ({ navigation }) => {
 					apikey: '6rOLEhF1PKO8tbicWoLG9wCXSRwlE3hk'
 				}
 			});
+			console.log('response:', JSON.stringify(response));
 
 			response.data.rates.update_date = new Date().toISOString(); // Добавляем текущую дату
 			await AsyncStorage.setItem('exchange', JSON.stringify(response.data.rates)); // записываем в AsSt
+			
 			
 			setRates(response.data.rates);
 
